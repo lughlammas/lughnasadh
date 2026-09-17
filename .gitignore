@@ -1,4 +1,5 @@
 build/
+build-android/
 cmake-build-*/
 *.o
 *.so
@@ -7,3 +8,6 @@ cmake-build-*/
 .vscode/
 *.user
 .DS_Store
+CMakeLists.txt.bak
+*.apk
+*.keystore

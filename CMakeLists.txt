@@ -26,7 +26,10 @@ if(MSVC)
   target_compile_options(lughnasadh PRIVATE /O2 /EHsc)
 else()
   target_compile_options(lughnasadh PRIVATE -O3 -Wall -Wextra -Wno-unused-parameter)
-  target_link_libraries(lughnasadh PRIVATE pthread)
+  # Bionic already provides pthread; do not link libpthread on Android.
+  if(NOT ANDROID)
+    target_link_libraries(lughnasadh PRIVATE pthread)
+  endif()
 endif()
 
 install(TARGETS lughnasadh RUNTIME DESTINATION bin)

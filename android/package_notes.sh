@@ -1,7 +1,17 @@
 #!/usr/bin/env bash
-# Helper notes — does not produce a full Play Store APK by itself.
+# Quick pointers for Android arm64 packaging (0.2.0 Second Harvest)
 set -euo pipefail
-echo "Build Linux first: cmake -B build && cmake --build build -j"
-echo "For arm64-v8a, use Android NDK toolchain (see android/README.md)."
-echo "Place liblughnasadh.so in lib/arm64-v8a/ and set enginelist name to"
-echo "  Lughnasadh 0.2.0 Second Harvest"
+cat <<'TXT'
+1) Build Linux UCI:  cmake -B build && cmake --build build -j
+2) Build arm64 .so:  ANDROID_NDK=/path/to/ndk ./android/build_arm64.sh
+3) Package unsigned: python3 android/package_apk.py \
+     --skeleton /path/to/extracted-0.1.0-apk \
+     --so android/out/liblughnasadh.so \
+     --ref-apk /path/to/Lughnasadh-0.1.0.apk \
+     --out-dir /tmp/lugh-apk-stage \
+     --apk /tmp/Lughnasadh-0.2.0-arm64-unsigned.apk
+4) Sign:             ./android/sign_apk.sh unsigned.apk signed.apk /path/to.keystore lughnasadh
+
+Display name in enginelist: Lughnasadh 0.2.0 Second Harvest
+Native lib: lib/arm64-v8a/liblughnasadh.so
+TXT
