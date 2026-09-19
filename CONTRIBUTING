@@ -1,0 +1,17 @@
+Contributing to Lughnasadh
+==========================
+
+Lughnasadh follows a progressive free-software lab practice:
+
+1. Prefer clarity over micro-optimization unless measured.
+2. Keep UCI compatible (Sherlock and other GUIs depend on it).
+3. Document user-visible changes in NEWS; technical notes in ChangeLog / doc/.
+4. Prep/analysis only — do not add features whose primary purpose is
+   live cheating in official events.
+5. Open a pull request against main with a short rationale and build proof.
+
+Coding
+------
+* C++20
+* cmake -B build && cmake --build build -j
+* Run the UCI smoke from INSTALL before sending a PR

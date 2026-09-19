@@ -1,5 +1,7 @@
 # Lughnasadh 0.3.0 — Third Harvest
 
+**Documentation (GNU-style hierarchy):** see [`doc/README`](doc/README), `INSTALL`, `AUTHORS`, `NEWS`, `ChangeLog`, `COPYING`, `CONTRIBUTING`.
+
 Classical UCI chess engine (bitboards + alpha-beta). Written from scratch for study and prep/training. **Not** a Stockfish fork and **not** Stockfish-strength.
 
 > Prep / training only — not for live official championship assistance. Do not brand as cheating.
