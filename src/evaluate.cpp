@@ -129,6 +129,12 @@ Tapered evaluate_side(const Position& pos, Color us) {
     add_mob(ROOK, 3, 4);
     add_mob(QUEEN, 1, 2);
 
+    // Bishop pair — classical C++ lesson: two bishops often outweigh two knights in open positions
+    if (popcount(pos.pieces(us, BISHOP)) >= 2) {
+        score.mg += 30;
+        score.eg += 50;
+    }
+
     // King safety: count enemy attacks near our king
     Square ksq = pos.king_square(us);
     Bitboard kingZone = PseudoAttacks[KING][ksq] | square_bb(ksq);

@@ -1,0 +1,22 @@
+Lughnasadh documentation (hierarchical)
+=======================================
+
+This tree follows the spirit of GNU / free-software project docs:
+top-level files for install and legal; doc/ for manuals and policy.
+
+Index
+-----
+* ../README.md     — overview (EN/PT)
+* ../INSTALL       — build and install
+* ../AUTHORS       — credits
+* ../NEWS          — user-visible history
+* ../ChangeLog     — developer-oriented log
+* ../COPYING       — free-software notice + pointer to LICENSE
+* ../LICENSE       — MIT full text
+* ../CONTRIBUTING  — how to help
+* architecture.md  — engine modules
+* freeness.md      — free-software stance (GNU philosophy alignment)
+* uci.md           — UCI commands supported
+* house-policy.md  — prep vs official play
+
+Start with ../README.md, then INSTALL, then freeness.md.

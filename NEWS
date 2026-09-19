@@ -1,0 +1,12 @@
+Lughnasadh NEWS — history of user-visible changes
+=================================================
+
+* Version 0.3.0 (Third Harvest)
+  Aspiration windows, check extension, bishop-pair evaluation.
+  Documentation tree aligned with free-software / GNU-style layout.
+
+* Version 0.2.0 (Second Harvest)
+  Bitboards, iterative deepening, TT, null-move, LMR, quiescence, tapered eval.
+
+* Version 0.1.0 (First Harvest)
+  Initial UCI classical engine for study and prep.

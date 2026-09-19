@@ -1,0 +1,11 @@
+2026-09-19  Guilherme / lughlammas
+
+	* Version 0.3.0 Third Harvest.
+	* src/search.cpp: aspiration windows; check extension.
+	* src/evaluate.cpp: bishop-pair bonus.
+	* doc/: hierarchical free-software documentation.
+	* AUTHORS, NEWS, INSTALL, ChangeLog, COPYING note.
+
+2026-09-17  Guilherme / lughlammas
+
+	* Version 0.2.0 Second Harvest (classical search/eval stack).

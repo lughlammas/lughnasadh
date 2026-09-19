@@ -214,6 +214,9 @@ Value search_node(Position& pos, StateInfo* st_stack, int ply, Depth depth,
         bool gives_check = pos.gives_check(m);
 
         Depth new_depth = depth - 1;
+        // Check extension — search a ply deeper when the move gives check
+        if (gives_check && new_depth < depth)
+            new_depth += 1;
 
         // LMR
         Depth reduction = 0;
@@ -332,11 +335,36 @@ void start_search(Position& pos, const Limits& lim) {
     StateInfo st_stack[MAX_PLY + 8];
     int max_d = limits.depth > 0 ? limits.depth : 64;
     Value alpha = -VALUE_INFINITE, beta = VALUE_INFINITE;
+    Value prev = 0;
+    constexpr Value ASP = 40;
 
     for (int depth = 1; depth <= max_d; ++depth) {
         root_depth = depth;
-        Value score = search_node(pos, st_stack, 0, depth, alpha, beta, false);
+        // Aspiration windows after depth 4 — classic alpha-beta C++ pattern
+        if (depth >= 5) {
+            alpha = prev - ASP;
+            beta = prev + ASP;
+        } else {
+            alpha = -VALUE_INFINITE;
+            beta = VALUE_INFINITE;
+        }
+
+        Value score;
+        while (true) {
+            score = search_node(pos, st_stack, 0, depth, alpha, beta, false);
+            if (Search.stop && depth > 1) break;
+            if (score <= alpha) {
+                alpha = -VALUE_INFINITE;
+                continue;
+            }
+            if (score >= beta) {
+                beta = VALUE_INFINITE;
+                continue;
+            }
+            break;
+        }
         if (Search.stop && depth > 1) break;
+        prev = score;
 
         auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::steady_clock::now() - start_time).count();

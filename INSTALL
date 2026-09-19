@@ -1,0 +1,29 @@
+Installing Lughnasadh
+=====================
+
+Requirements
+------------
+* A C++20 compiler (GCC 10+, Clang 12+, or MSVC recent)
+* CMake 3.16 or newer
+* pthread (Unix; not needed for Android Bionic builds)
+
+Build (release)
+---------------
+    cmake -B build -DCMAKE_BUILD_TYPE=Release
+    cmake --build build -j
+
+Binary: build/lughnasadh
+
+Optional install
+----------------
+    cmake --install build --prefix /usr/local
+
+Smoke (UCI)
+-----------
+    printf 'uci\nisready\nposition startpos\ngo depth 6\nquit\n' | ./build/lughnasadh
+
+Perft check (startpos depth 5 = 4865609)
+----------------------------------------
+    printf 'position startpos\ngo perft 5\nquit\n' | ./build/lughnasadh
+
+Android packaging notes: see android/README.md

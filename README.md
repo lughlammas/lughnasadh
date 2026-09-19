@@ -1,4 +1,6 @@
-# Lughnasadh 0.2.0 — Second Harvest
+# Lughnasadh 0.3.0 — Third Harvest
+
+**Documentation (GNU-style hierarchy):** see [`doc/README`](doc/README), `INSTALL`, `AUTHORS`, `NEWS`, `ChangeLog`, `COPYING`, `CONTRIBUTING`.
 
 Classical UCI chess engine (bitboards + alpha-beta). Written from scratch for study and prep/training. **Not** a Stockfish fork and **not** Stockfish-strength.
 
@@ -44,7 +46,7 @@ perft 5
 
 ### UCI identity
 
-- `id name Lughnasadh 0.2.0 Second Harvest`
+- `id name Lughnasadh 0.3.0 Third Harvest`
 - `id author Guilherme / Lugh Labs`
 
 ### Options
@@ -52,7 +54,7 @@ perft 5
 | Option | Default | Notes |
 |--------|---------|--------|
 | Hash | 16 | MB transposition table |
-| Threads | 1 | Single-threaded search in 0.2.0 |
+| Threads | 1 | Single-threaded search in 0.3.0 |
 | Move Overhead | 50 | ms subtracted from clock |
 | Clear Hash | button | Clears TT |
 
