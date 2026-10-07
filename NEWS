@@ -1,6 +1,18 @@
 Lughnasadh NEWS — history of user-visible changes
 =================================================
 
+* Version 0.4.0 (Fourth Harvest) — 27.09.2026
+  Fix: promotion moves were printed with the wrong letter (queen came out as
+  a null byte, knight as "b", bishop as "r", rook as "q").
+  Fix: "go" now runs on a search thread, so "stop" and "go infinite" work.
+  New: "go nodes N" limit.
+  Eval: isolated/doubled pawns, rooks on open files, passed pawns with king
+  distance and free path, rule of the square in pawn endings, drawish-material
+  scaling (bare minor, minor + pawn vs pawns, opposite bishops).
+  Search: dynamic contempt, so the better side avoids repetitions.
+  Measured: 50 games vs 0.3.0 (+promo fix) at 0.2 s/move = 24.5/50,
+  i.e. no measurable strength change yet.
+
 * Version 0.3.0 (Third Harvest)
   Aspiration windows, check extension, bishop-pair evaluation.
   Documentation tree aligned with free-software / GNU-style layout.

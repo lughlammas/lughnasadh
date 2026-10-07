@@ -6,7 +6,8 @@ Supported (core):
 * `isready` / `readyok`
 * `ucinewgame`
 * `position startpos | fen ... [moves ...]`
-* `go depth N | movetime N | wtime/btime/winc/binc | infinite | perft N`
+* `go depth N | movetime N | nodes N | wtime/btime/winc/binc | infinite | perft N`
+  (since 0.4.0 the search runs on its own thread, so `stop` interrupts it)
 * `stop`
 * `quit`
 * options: Hash, Threads (1), Move Overhead, Clear Hash

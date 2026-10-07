@@ -114,7 +114,7 @@ inline std::string move_str(Move m) {
     if (m.none()) return "0000";
     std::string s = square_str(m.from()) + square_str(m.to());
     if (m.type() == PROMOTION) {
-        static const char pcs[] = " nbrq";
+        static const char pcs[] = "  nbrq";
         s += pcs[m.promotion_type()];
     }
     return s;

@@ -27,11 +27,17 @@ Move root_moves[MAX_MOVES];
 int root_move_count = 0;
 int root_depth = 0;
 
+// Dynamic contempt: when the root side is clearly better, a repetition is scored
+// slightly below zero for it, so it keeps playing for the win instead of shuffling.
+int contempt = 0;
+Value draw_value(int ply) { return (ply & 1) ? Value(contempt) : Value(-contempt); }
+
 Value mate_in(int ply) { return VALUE_MATE - ply; }
 Value mated_in(int ply) { return -VALUE_MATE + ply; }
 
 bool time_up() {
     if (Search.stop) return true;
+    if (limits.nodes && Search.nodes >= limits.nodes) return true;
     if (limits.infinite || limits.depth) {
         if (limits.depth && !limits.movetime && !limits.wtime) return false;
     }
@@ -90,7 +96,7 @@ Move pick_best(MoveList& list, int start) {
 
 Value quiescence(Position& pos, StateInfo* st_stack, int ply, Value alpha, Value beta) {
     Search.nodes++;
-    if ((Search.nodes & 2047) == 0 && time_up()) {
+    if (((Search.nodes & 2047) == 0 || (limits.nodes && Search.nodes >= limits.nodes)) && time_up()) {
         Search.stop = true;
         return 0;
     }
@@ -141,13 +147,13 @@ Value search_node(Position& pos, StateInfo* st_stack, int ply, Depth depth,
     Search.nodes++;
     Search.seldepth = std::max(Search.seldepth, ply);
 
-    if ((Search.nodes & 2047) == 0 && time_up()) {
+    if (((Search.nodes & 2047) == 0 || (limits.nodes && Search.nodes >= limits.nodes)) && time_up()) {
         Search.stop = true;
         return 0;
     }
 
     if (!root) {
-        if (pos.is_draw(ply)) return VALUE_DRAW;
+        if (pos.is_draw(ply)) return draw_value(ply);
         alpha = std::max(alpha, mated_in(ply));
         beta = std::min(beta, mate_in(ply + 1));
         if (alpha >= beta) return alpha;
@@ -331,6 +337,10 @@ void start_search(Position& pos, const Limits& lim) {
         return;
     }
     Search.best_move = list.moves[0].move;
+    {
+        Value se = evaluate(pos);
+        contempt = se > 80 ? 20 : (se < -80 ? -20 : 0);
+    }
 
     StateInfo st_stack[MAX_PLY + 8];
     int max_d = limits.depth > 0 ? limits.depth : 64;

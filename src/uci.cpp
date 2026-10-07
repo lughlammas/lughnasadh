@@ -97,6 +97,7 @@ void go_command(std::istringstream& is) {
         else if (token == "winc") is >> lim.winc;
         else if (token == "binc") is >> lim.binc;
         else if (token == "movestogo") is >> lim.movestogo;
+        else if (token == "nodes") is >> lim.nodes;
         else if (token == "infinite") lim.infinite = true;
         else if (token == "perft") {
             lim.perft = true;
@@ -134,7 +135,7 @@ void uci_loop() {
         is >> token;
 
         if (token == "uci") {
-            std::cout << "id name Lughnasadh 0.3.0 Third Harvest\n"
+            std::cout << "id name Lughnasadh 0.4.0 Fourth Harvest\n"
                       << "id author Guilherme / Lugh Labs\n"
                       << "option name Hash type spin default 16 min 1 max 4096\n"
                       << "option name Threads type spin default 1 min 1 max 1\n"
@@ -194,6 +195,7 @@ void uci_loop() {
                 else if (token == "winc") is >> lim.winc;
                 else if (token == "binc") is >> lim.binc;
                 else if (token == "movestogo") is >> lim.movestogo;
+                else if (token == "nodes") is >> lim.nodes;
                 else if (token == "infinite") lim.infinite = true;
                 else if (token == "perft") {
                     lim.perft = true;
@@ -202,8 +204,8 @@ void uci_loop() {
             }
             if (lim.wtime > move_overhead) lim.wtime -= move_overhead;
             if (lim.btime > move_overhead) lim.btime -= move_overhead;
-            // Run synchronously for reliability (Threads=1)
-            start_search(pos, lim);
+            // 0.4.0: search runs on its own thread so "stop" (and "go infinite") work from a GUI
+            search_thread = std::thread([lim]() { start_search(pos, lim); });
         } else if (token == "stop") {
             Search.stop = true;
             if (search_thread.joinable()) search_thread.join();
@@ -220,6 +222,8 @@ void uci_loop() {
             std::cout << "info string perft " << d << " nodes " << n << std::endl;
         }
     }
+    // Input closed without "quit": let a running search finish and print bestmove
+    if (search_thread.joinable()) search_thread.join();
 }
 
 } // namespace lugh

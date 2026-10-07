@@ -3,7 +3,7 @@
 ```
 uci.cpp        UCI loop / options
 search.cpp     Iterative deepening, alpha-beta, TT, LMR, qsearch
-evaluate.cpp   Tapered eval (material, PST, mobility, king safety, passers, bishop pair)
+evaluate.cpp   Tapered eval (material, PST, mobility, king safety, passers, bishop pair, pawn structure, rooks on open files, endgame scaling)
 movegen.cpp    Move generation
 position.cpp   Board state, make/unmake
 bitboard.cpp   Bitboard helpers

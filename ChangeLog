@@ -1,3 +1,16 @@
+2026-09-27  Guilherme / lughlammas
+
+	* Version 0.4.0 Fourth Harvest.
+	* src/types.hpp (move_str): fix promotion letter table (q/r/b/n).
+	* src/uci.cpp: "go" runs on a search thread so "stop" / "go infinite"
+	work; parse "go nodes N"; join a running search when stdin closes.
+	* src/search.hpp, src/search.cpp: Limits::nodes node limit; dynamic
+	contempt (draw score biased against the side that is clearly better).
+	* src/evaluate.cpp: isolated/doubled pawns, rooks on open files,
+	passed pawns with king distance and free path, rule of the square,
+	drawish-material scaling.
+	* CMakeLists.txt, README.md, doc/uci.md: version 0.4.0, docs.
+
 2026-09-19  Guilherme / lughlammas
 
 	* Version 0.3.0 Third Harvest.
