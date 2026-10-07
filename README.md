@@ -1,6 +1,6 @@
 # Lughnasadh 0.4.0 — Fourth Harvest
 
-A classical UCI chess engine written in C++20 by Guilherme Cavalcanti / Lugh Labs, maintained within **ARBOCK LABS**, an independent software and applied-AI lab currently being structured.
+An original classical UCI chess engine written in C++20 by Guilherme Cavalcanti. Originally developed under Lugh Labs; currently maintained under **ARBOCK LABS**, an independent software and applied-AI lab currently being structured.
 
 **Status:** experimental engine for study, interface integration, and chess analysis. The source includes Fourth Harvest search, evaluation, and UCI changes. It uses classical evaluation, not NNUE; no playing-strength or benchmark claim is made here.
 
@@ -29,7 +29,7 @@ go depth 8
 
 Wait for `bestmove` before sending `quit`. Search also accepts `movetime`, clock/increment fields, `movestogo`, `nodes`, and `infinite`; `stop` requests termination of the search thread.
 
-Identification: `id name Lughnasadh 0.4.0 Fourth Harvest`.
+Identification: `id name Lughnasadh 0.4.0 Fourth Harvest` and `id author Guilherme Cavalcanti / ARBOCK LABS`.
 
 | Option | Default | Scope |
 |---|---|---|
