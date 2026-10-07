@@ -1,5 +1,7 @@
 # Lughnasadh 0.4.0 — Fourth Harvest
 
+UCI chess engine by Guilherme Cavalcanti · maintained by **ARBOCK LABS**.
+
 **Documentation (GNU-style hierarchy):** see [`doc/README`](doc/README), `INSTALL`, `AUTHORS`, `NEWS`, `ChangeLog`, `COPYING`, `CONTRIBUTING`.
 
 Classical UCI chess engine (bitboards + alpha-beta). Written from scratch for study and prep/training. **Not** a Stockfish fork and **not** Stockfish-strength.
@@ -47,7 +49,7 @@ perft 5
 ### UCI identity
 
 - `id name Lughnasadh 0.4.0 Fourth Harvest`
-- `id author Guilherme / Lugh Labs`
+- `id author Guilherme Cavalcanti / ARBOCK LABS`
 
 ### Options
 
@@ -128,4 +130,6 @@ Notas de empacotamento em [`android/README.md`](android/README.md).
 
 ## License
 
-MIT — Guilherme Cavalcanti / Lugh Labs (see `LICENSE`).
+MIT — Guilherme Cavalcanti / ARBOCK LABS (see `LICENSE`).
+
+Originally developed under Lugh Labs; currently maintained under ARBOCK LABS.

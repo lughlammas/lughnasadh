@@ -1,6 +1,6 @@
 # House policy — prep vs board
 
-Lughnasadh is part of the Lugh Lammas lab.
+Lughnasadh is maintained by ARBOCK LABS (originally developed under Lugh Labs / the Lugh Lammas lab).
 
 * **Yesod Coordinator** role: organize tools; deliver cleanly to Malkuth.
 * Chess war of the house: coach beside the board; **no engine in official play**.

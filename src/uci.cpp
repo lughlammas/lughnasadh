@@ -136,7 +136,7 @@ void uci_loop() {
 
         if (token == "uci") {
             std::cout << "id name Lughnasadh 0.4.0 Fourth Harvest\n"
-                      << "id author Guilherme / Lugh Labs\n"
+                      << "id author Guilherme Cavalcanti / ARBOCK LABS\n"
                       << "option name Hash type spin default 16 min 1 max 4096\n"
                       << "option name Threads type spin default 1 min 1 max 1\n"
                       << "option name Move Overhead type spin default 50 min 0 max 5000\n"
