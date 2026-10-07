@@ -2,7 +2,7 @@
 
 An original classical UCI chess engine written in C++20 by Guilherme Cavalcanti. Originally developed under Lugh Labs; currently maintained under **ARBOCK LABS**, an independent software and applied-AI lab currently being structured.
 
-**Status:** experimental engine for study, interface integration, and chess analysis. The source includes Fourth Harvest search, evaluation, and UCI changes. It uses classical evaluation, not NNUE; no playing-strength or benchmark claim is made here.
+**Status:** experimental engine for study, interface integration, and chess analysis. The source includes Fourth Harvest search, evaluation, and UCI changes. It uses classical evaluation, not NNUE; no absolute Elo rating is claimed.
 
 ## Build
 
@@ -58,7 +58,24 @@ perft 5
 quit
 ```
 
-The standard start-position reference count at depth 5 is 4,865,609. This is a move-generation reference, not a strength or speed measurement. The repository build check compiles the engine and checks UCI identification/readiness and this perft result. No historical match result is presented as a reproducible benchmark.
+The standard start-position reference count at depth 5 is 4,865,609. This is a move-generation reference, not a strength or speed measurement. The repository build check compiles the engine and checks UCI identification/readiness and this perft result. This CI check does not measure match performance.
+
+## Technical validation
+
+Lughnasadh 0.4.0 was subjected to a separate technical audit covering move-generation correctness, differential state validation, controlled version-to-version matches, short tactical tests, search measurements, and robustness testing.
+
+Verified highlights include:
+
+- 27 / 27 perft tests passed
+- 1,498 valid positions checked by differential testing
+- 46,511 move transitions checked
+- 80 controlled comparison games
+- 12,039 post-opening half-moves with no illegal move recorded
+- 24 / 24 generated mate-in-one / mate-in-two positions solved
+
+The match results demonstrate relative progress within the Lughnasadh family; they do not establish an absolute Elo rating. Measurements apply to the original `Engine 0.4.zip` artifact identified in the report, not to later repository changes.
+
+[Read the full technical validation](docs/TECHNICAL_VALIDATION_0.4.md)
 
 ## Android source helpers
 
