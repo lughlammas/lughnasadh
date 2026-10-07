@@ -23,4 +23,4 @@ mkdir -p "$(dirname "$OUT")"
 chmod 755 "$OUT"
 echo "Wrote $OUT ($(wc -c < "$OUT") bytes)"
 readelf -h "$OUT" | grep -E 'Class|Type|Machine' || true
-strings "$OUT" | grep -F 'Lughnasadh 0.2.0' || true
+strings "$OUT" | grep -F 'Lughnasadh 0.4.0' || true

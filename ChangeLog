@@ -1,3 +1,10 @@
+2026-10-07  Guilherme Cavalcanti / lughlammas
+
+	* Import the existing Fourth Harvest 0.4.0 working-tree changes.
+	* Reconcile source identity, CMake metadata, and English-first documentation.
+	* Preserve original history and MIT attribution; exclude build/signing output.
+	* Document source-backed promotion, search-thread, node-limit, and evaluation changes.
+
 2026-09-19  Guilherme / lughlammas
 
 	* Version 0.3.0 Third Harvest.

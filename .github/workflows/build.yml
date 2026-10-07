@@ -1,0 +1,27 @@
+name: Build and UCI validation
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build C++20 engine
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build --parallel 2
+      - name: UCI identity, readiness, and start-position perft
+        run: |
+          python3 - <<'PY'
+          import subprocess
+          result = subprocess.run(
+              ["build/lughnasadh"],
+              input="uci\nisready\nposition startpos\nperft 5\nquit\n",
+              text=True, capture_output=True, timeout=120, check=True,
+          )
+          print(result.stdout)
+          assert "id name Lughnasadh 0.4.0 Fourth Harvest" in result.stdout
+          assert "uciok" in result.stdout and "readyok" in result.stdout
+          assert "info string perft 5 nodes 4865609" in result.stdout
+          PY

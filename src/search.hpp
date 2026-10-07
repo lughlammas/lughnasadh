@@ -12,6 +12,7 @@ struct Limits {
     int movetime = 0;
     int wtime = 0, btime = 0, winc = 0, binc = 0;
     int movestogo = 0;
+    uint64_t nodes = 0;
     bool infinite = false;
     bool perft = false;
     int perft_depth = 0;

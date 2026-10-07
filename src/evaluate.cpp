@@ -1,5 +1,6 @@
 #include "evaluate.hpp"
 #include <algorithm>
+#include <cstdlib>
 
 namespace lugh {
 
@@ -85,6 +86,10 @@ S(20,-50),S(30,-40),S(10,-30),S(0,-20),S(0,-20),S(10,-30),S(30,-40),S(20,-50)
 }
 };
 
+inline int dist(Square a, Square b) {
+    return std::max(std::abs(int(file_of(a)) - int(file_of(b))), std::abs(int(rank_of(a)) - int(rank_of(b))));
+}
+
 int phase_weight(const Position& pos) {
     int p = 0;
     p += popcount(pos.pieces(KNIGHT)) * 1;
@@ -161,18 +166,25 @@ Tapered evaluate_side(const Position& pos, Color us) {
     }
     score.mg -= attackUnits * attackUnits / 4;
 
-    // Passed pawns
+    // Pawn structure + passed pawns (0.4.0)
     Bitboard ourPawns = pos.pieces(us, PAWN);
     Bitboard theirPawns = pos.pieces(them, PAWN);
+    Square theirK = pos.king_square(them);
+    Square ourK = ksq;
+    const bool theirPawnsOnly = !(pos.pieces(them) & ~pos.pieces(them, PAWN) & ~square_bb(theirK));
     Bitboard b = ourPawns;
     while (b) {
         Square s = pop_lsb(b);
         File f = file_of(s);
+        Bitboard adj = 0;
+        if (f > 0) adj |= FileABB << (f - 1);
+        if (f < 7) adj |= FileABB << (f + 1);
+        // Isolated and doubled pawns
+        if (!(ourPawns & adj)) { score.mg -= 10; score.eg -= 15; }
+        if (popcount(ourPawns & (FileABB << f)) > 1) { score.mg -= 6; score.eg -= 12; }
+
         Bitboard span = 0;
-        // Forward files: same + adjacent
-        Bitboard files = FileABB << f;
-        if (f > 0) files |= FileABB << (f - 1);
-        if (f < 7) files |= FileABB << (f + 1);
+        Bitboard files = (FileABB << f) | adj;
         if (us == WHITE) {
             for (int r = rank_of(s) + 1; r <= 7; ++r)
                 span |= files & (Rank1BB << (8 * r));
@@ -180,16 +192,75 @@ Tapered evaluate_side(const Position& pos, Color us) {
             for (int r = 0; r < rank_of(s); ++r)
                 span |= files & (Rank1BB << (8 * r));
         }
-        if (!(span & theirPawns)) {
-            int rr = relative_rank(us, s);
-            static const int PassedBonusMg[8] = {0,5,10,20,35,60,100,0};
-            static const int PassedBonusEg[8] = {0,10,20,40,70,120,200,0};
-            score.mg += PassedBonusMg[rr];
-            score.eg += PassedBonusEg[rr];
+        if (span & theirPawns) continue;
+
+        int rr = relative_rank(us, s);
+        static const int PassedBonusMg[8] = {0,5,10,20,35,60,100,0};
+        static const int PassedBonusEg[8] = {0,10,20,40,70,120,200,0};
+        score.mg += PassedBonusMg[rr];
+        score.eg += PassedBonusEg[rr];
+
+        Square stop = us == WHITE ? s + 8 : s - 8;
+        Square queenSq = make_square(f, us == WHITE ? RANK_8 : RANK_1);
+        if (rr >= 3) {
+            // Kings: the defender wants to be in front of the pawn, the owner beside it
+            int w = rr - 2;
+            score.eg += (dist(theirK, stop) * 5 - dist(ourK, stop) * 2) * w;
+            // Free path to the promotion square
+            if (!(pos.pieces() & square_bb(stop))) score.eg += 5 * w;
+        }
+        // Rule of the square: in a pure pawn ending an unstoppable passer is worth almost a queen
+        if (theirPawnsOnly) {
+            int pawnDist = std::min(5, 7 - rr);
+            int kingDist = dist(theirK, queenSq) - (pos.side_to_move() == them ? 1 : 0);
+            Bitboard path = 0;
+            for (Square t = stop; ; t = (us == WHITE ? t + 8 : t - 8)) {
+                path |= square_bb(t);
+                if (t == queenSq) break;
+            }
+            if (kingDist > pawnDist && !(path & pos.pieces(us)))
+                score.eg += 500;
+        }
+    }
+
+    // Rooks on open / half-open files
+    Bitboard rks = pos.pieces(us, ROOK);
+    while (rks) {
+        Square s = pop_lsb(rks);
+        Bitboard fm = FileABB << file_of(s);
+        if (!(fm & ourPawns)) {
+            if (!(fm & theirPawns)) { score.mg += 20; score.eg += 10; }
+            else { score.mg += 10; score.eg += 5; }
         }
     }
 
     return score;
+}
+
+// Endgame scaling (0.4.0): drawish material makes the score shrink toward zero,
+// so the engine stops calling a dead draw "+3".
+int scale_factor(const Position& pos, Color strong) {
+    Color weak = ~strong;
+    auto npm = [&](Color c) {
+        return popcount(pos.pieces(c, KNIGHT)) * 320 + popcount(pos.pieces(c, BISHOP)) * 330
+             + popcount(pos.pieces(c, ROOK)) * 500 + popcount(pos.pieces(c, QUEEN)) * 900;
+    };
+    int sp = popcount(pos.pieces(strong, PAWN));
+    int snpm = npm(strong), wnpm = npm(weak);
+    // Bare minors / nothing: insufficient material
+    if (sp == 0 && snpm <= 330) return 0;
+    // No pawns and less than a rook up: very hard to win
+    if (sp == 0 && snpm - wnpm < 500) return 8;
+    // One lonely minor + one pawn against pawns: usually a draw if the defender has pawns
+    if (sp == 1 && snpm <= 330 && wnpm == 0 && popcount(pos.pieces(weak, PAWN)) >= 1) return 24;
+    // Opposite-coloured bishops with only bishops left
+    if (snpm == 330 && wnpm == 330 && pos.pieces(strong, BISHOP) && pos.pieces(weak, BISHOP)) {
+        constexpr Bitboard DarkSquares = 0xAA55AA55AA55AA55ULL;
+        bool sd = pos.pieces(strong, BISHOP) & DarkSquares;
+        bool wd = pos.pieces(weak, BISHOP) & DarkSquares;
+        if (sd != wd) return 32;
+    }
+    return 64;
 }
 
 } // namespace
@@ -200,6 +271,7 @@ Value evaluate(const Position& pos) {
     Tapered score = w - b;
     int phase = phase_weight(pos);
     int v = (score.mg * phase + score.eg * (24 - phase)) / 24;
+    v = v * scale_factor(pos, v > 0 ? WHITE : BLACK) / 64;
     // Tempo
     v += (pos.side_to_move() == WHITE) ? 10 : -10;
     return Value(pos.side_to_move() == WHITE ? v : -v);

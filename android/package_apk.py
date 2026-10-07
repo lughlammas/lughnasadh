@@ -7,8 +7,8 @@ import struct
 import zipfile
 from pathlib import Path
 
-ENGINE_NAME = "Lughnasadh 0.2.0 Second Harvest"
-VERSION_NAME = "0.2.0"
+ENGINE_NAME = "Lughnasadh 0.4.0 Fourth Harvest"
+VERSION_NAME = "0.4.0"
 
 
 def encode_utf8_string(s: str) -> bytes:

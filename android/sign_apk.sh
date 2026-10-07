@@ -1,29 +1,16 @@
 #!/usr/bin/env bash
-# zipalign + apksigner (v1+v2+v3). Requires build-tools on PATH.
+# Sign a locally generated APK. Credentials remain local environment variables.
 set -euo pipefail
 IN="${1:?unsigned apk}"
 OUT="${2:?signed apk}"
-KS="${KEYSTORE:-$HOME/.android/debug.keystore}"
-ALIAS="${KEY_ALIAS:-androiddebugkey}"
-STOREPASS="${KEYSTORE_PASS:-android}"
-KEYPASS="${KEY_PASS:-android}"
-
-if [[ ! -f "$KS" ]]; then
-  KS="${3:-}"
-  ALIAS="${4:-lughnasadh}"
-fi
-if [[ ! -f "$KS" ]]; then
-  echo "Keystore not found. Pass path as \$3 or set KEYSTORE." >&2
-  exit 1
-fi
-
+: "${KEYSTORE:?Set KEYSTORE to a local keystore}"
+: "${KEY_ALIAS:?Set KEY_ALIAS}"
+: "${KEYSTORE_PASS:?Set KEYSTORE_PASS}"
+: "${KEY_PASS:?Set KEY_PASS}"
 ALIGNED="$(mktemp --suffix=.apk)"
+trap 'rm -f "$ALIGNED"' EXIT
 zipalign -f -p 4 "$IN" "$ALIGNED"
-apksigner sign \
-  --ks "$KS" --ks-pass "pass:$STOREPASS" --key-pass "pass:$KEYPASS" \
-  --ks-key-alias "$ALIAS" \
-  --v1-signing-enabled true --v2-signing-enabled true --v3-signing-enabled true \
-  --out "$OUT" "$ALIGNED"
-rm -f "$ALIGNED"
+apksigner sign --ks "$KEYSTORE" --ks-pass env:KEYSTORE_PASS --key-pass env:KEY_PASS \
+  --ks-key-alias "$KEY_ALIAS" --v1-signing-enabled true --v2-signing-enabled true \
+  --v3-signing-enabled true --out "$OUT" "$ALIGNED"
 apksigner verify --verbose "$OUT"
-echo "Signed $OUT"

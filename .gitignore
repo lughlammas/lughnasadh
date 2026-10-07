@@ -11,3 +11,20 @@ cmake-build-*/
 CMakeLists.txt.bak
 *.apk
 *.keystore
+
+/android/out/
+*.exe
+*.dll
+*.dylib
+*.jks
+*.p12
+*.aab
+*.tmp
+.~*
+__pycache__/
+*.pyc
+.env
+.env.*
+local.properties
+
+*Name clash*

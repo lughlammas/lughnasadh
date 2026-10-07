@@ -1,116 +1,69 @@
-# Lughnasadh 0.3.0 — Third Harvest
+# Lughnasadh 0.4.0 — Fourth Harvest
 
-**Documentation (GNU-style hierarchy):** see [`doc/README`](doc/README), `INSTALL`, `AUTHORS`, `NEWS`, `ChangeLog`, `COPYING`, `CONTRIBUTING`.
+A classical UCI chess engine written in C++20 by Guilherme Cavalcanti / Lugh Labs, maintained within **ARBOCK LABS**, an independent software and applied-AI lab currently being structured.
 
-Classical UCI chess engine (bitboards + alpha-beta). Written from scratch for study and prep/training. **Not** a Stockfish fork and **not** Stockfish-strength.
+**Status:** experimental engine for study, interface integration, and chess analysis. The source includes Fourth Harvest search, evaluation, and UCI changes. It uses classical evaluation, not NNUE; no playing-strength or benchmark claim is made here.
 
-> Prep / training only — not for live official championship assistance. Do not brand as cheating.
+## Build
 
----
+Requires CMake 3.16 or newer and a C++20 compiler with standard threading support.
 
-## English
-
-### Build (Linux / macOS)
-
-```bash
-cmake -B build
-cmake --build build -j
+```sh
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build --parallel
 ```
 
-Binary: `build/lughnasadh`
+On Linux/macOS the executable is `build/lughnasadh`. With a multi-configuration Windows generator, use `cmake --build build --config Release`; the executable is normally `build/Release/lughnasadh.exe`.
 
-### Run (UCI)
+## UCI interface
 
-```bash
-./build/lughnasadh
+Run the executable in a terminal or configure it as an engine in a UCI-compatible chess interface.
+
+```text
+uci
+isready
+ucinewgame
+position startpos moves e2e4 e7e5
+go depth 8
 ```
 
-Smoke test:
+Wait for `bestmove` before sending `quit`. Search also accepts `movetime`, clock/increment fields, `movestogo`, `nodes`, and `infinite`; `stop` requests termination of the search thread.
 
-```bash
-printf 'uci\nisready\nposition startpos\ngo depth 8\nquit\n' | ./build/lughnasadh
-```
+Identification: `id name Lughnasadh 0.4.0 Fourth Harvest`.
 
-Perft (startpos depth 5 = **4865609**):
+| Option | Default | Scope |
+|---|---|---|
+| Hash | 16 MB | Transposition-table allocation |
+| Threads | 1 | One search worker; this is not parallel search |
+| Move Overhead | 50 ms | Clock allowance |
+| Clear Hash | button | Clear the transposition table |
+
+## Architecture
+
+- `src/bitboard.*`, `src/position.*`, `src/movegen.*`: board representation, make/unmake, and legal move generation.
+- `src/evaluate.*`: tapered classical evaluation, including material, piece-square tables, pawn structure, mobility, and king safety.
+- `src/search.*`: iterative deepening and alpha-beta search with transposition tables, aspiration windows, pruning/reductions, and quiescence search.
+- `src/tt.*`: transposition table.
+- `src/uci.*`: text protocol, options, position input, and asynchronous search lifecycle.
+
+See [architecture](doc/architecture.md), [UCI notes](doc/uci.md), [NEWS](NEWS), and [ChangeLog](ChangeLog).
+
+## Validation
+
+The implementation exposes a synchronous `perft` command:
 
 ```text
 position startpos
-go perft 5
-```
-
-or:
-
-```text
 perft 5
+quit
 ```
 
-### UCI identity
+The standard start-position reference count at depth 5 is 4,865,609. This is a move-generation reference, not a strength or speed measurement. The repository build check compiles the engine and checks UCI identification/readiness and this perft result. No historical match result is presented as a reproducible benchmark.
 
-- `id name Lughnasadh 0.3.0 Third Harvest`
-- `id author Guilherme / Lugh Labs`
+## Android source helpers
 
-### Options
+[Android notes](android/README.md) describe the optional arm64 cross-build and legacy APK packaging helpers. Packaging requires an external reference APK skeleton, an Android NDK, and locally configured signing credentials. An Android 0.4.0 APK release is not included or claimed. Build output and signing material are excluded from source control.
 
-| Option | Default | Notes |
-|--------|---------|--------|
-| Hash | 16 | MB transposition table |
-| Threads | 1 | Single-threaded search in 0.3.0 |
-| Move Overhead | 50 | ms subtracted from clock |
-| Clear Hash | button | Clears TT |
+## Authorship and license
 
-### Search features
-
-Bitboards · iterative deepening · TT · null-move · killers · history · LMR · quiescence + SEE · tapered eval (material, PST, mobility, king safety, passed pawns).
-
-### Honesty
-
-This is a **classical** educational engine. It is far weaker than Stockfish / NNUE engines. Use it for learning, testing GUIs, and casual analysis — not as a claim of elite strength.
-
-### Android (optional packaging)
-
-See [`android/README.md`](android/README.md) for notes on wrapping the native binary as an engine APK (`enginelist` + `.so`), matching the 0.1.0 First Harvest layout.
-
----
-
-## Português
-
-### Compilar
-
-```bash
-cmake -B build
-cmake --build build -j
-```
-
-Binário: `build/lughnasadh`
-
-### Executar
-
-```bash
-./build/lughnasadh
-```
-
-Teste rápido:
-
-```bash
-printf 'uci\nisready\nposition startpos\ngo depth 8\nquit\n' | ./build/lughnasadh
-```
-
-Perft (posição inicial, profundidade 5 = **4865609**):
-
-```text
-go perft 5
-```
-
-### Honestidade
-
-Motor **clássico** (não NNUE). Feito para estudo e treino — **não** é nível Stockfish. Não usar como ajuda em campeonato oficial ao vivo; não promover como trapaça.
-
-### Android
-
-Notas de empacotamento em [`android/README.md`](android/README.md).
-
----
-
-## License
-
-MIT — Guilherme Cavalcanti / Lugh Labs.
+Original attribution and available Git history are preserved in [AUTHORS](AUTHORS) and the commit history. Lughnasadh retains its existing [MIT license](LICENSE); this consolidation does not introduce a new license.
